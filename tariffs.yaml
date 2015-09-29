@@ -1,0 +1,61 @@
+- start: 0
+  end:   1416315600
+  rates:
+    peak:    0.3036
+    offpeak: 0.1386
+    export:  0
+  times:
+    weekday:
+      days: [1, 2, 3, 4, 5]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 23, rate: peak}
+      - {start: 23, end: 24, rate: offpeak}
+    weekend:
+      days: [0, 6]
+      periods:
+      - {start: 0,  end: 24, rate: offpeak}
+- start: 1416315600
+  end:   1420030800
+  rates:
+    peak:     0.308
+    shoulder: 0.231
+    offpeak:  0.13915
+    export:   0.08
+  times:
+    weekday:
+      days: [1, 2, 3, 4, 5]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 15, rate: shoulder}
+      - {start: 15, end: 21, rate: peak}
+      - {start: 21, end: 22, rate: shoulder}
+      - {start: 22, end: 24, rate: offpeak}
+    weekend:
+      days: [0, 6]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 22, rate: shoulder}
+      - {start: 22, end: 24, rate: offpeak}
+- start: 1416315600
+  end:   1580635220
+  rates:
+    peak:     0.308
+    shoulder: 0.231
+    offpeak:  0.13915
+    export:   0.065
+  times:
+    weekday:
+      days: [1, 2, 3, 4, 5]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 15, rate: shoulder}
+      - {start: 15, end: 21, rate: peak}
+      - {start: 21, end: 22, rate: shoulder}
+      - {start: 22, end: 24, rate: offpeak}
+    weekend:
+      days: [0, 6]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 22, rate: shoulder}
+      - {start: 22, end: 24, rate: offpeak}

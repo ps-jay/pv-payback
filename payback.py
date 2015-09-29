@@ -1,180 +1,16 @@
 import sqlite3
+import sys
 import time
+import yaml
 
-# XXX: To do - pass in by arg
-PVO_DB = '/tmp/pvoutput.sqlite'
-pvo_db = sqlite3.connect(PVO_DB)
-pvo_db.row_factory = sqlite3.Row
-cursor = pvo_db.cursor()
+# XXX: To do - pass in by arg & argparse it
+PVO_DB = sqlite3.connect(sys.argv[1])
+PVO_DB.row_factory = sqlite3.Row
+cursor = PVO_DB.cursor()
 
-# XXX: To do - pass in by yaml
-TARIFF = [
-    {
-        'start': 0,
-        'end'  : 1416315600,
-        'rates': {
-            'peak': 0.3036,
-            'offpeak': 0.1386,
-            'export': 0,  ##  wasn't paid until the meter changed
-        },
-        'times': {
-            'weekday': {
-                'days': [1, 2, 3, 4, 5,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 7,
-                        'rate' : 'offpeak',
-                    },
-                    {
-                        'start': 7,
-                        'end'  : 23,
-                        'rate' : 'peak',
-                    },
-                    {
-                        'start': 23,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-            'weekend': {
-                'days': [6, 0,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-        },
-    },
-    {
-        'start': 1416315600,
-        'end'  : 1420030800,
-        'rates': {
-            'peak': 0.308,
-            'shoulder': 0.231,
-            'offpeak': 0.13915,
-            'export': 0.08,
-        },
-        'times': {
-            'weekday': {
-                'days': [1, 2, 3, 4, 5,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 7,
-                        'rate' : 'offpeak',
-                    },
-                    {
-                        'start': 7,
-                        'end'  : 15,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 15,
-                        'end'  : 21,
-                        'rate' : 'peak',
-                    },
-                    {
-                        'start': 21,
-                        'end'  : 22,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 22,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-            'weekend': {
-                'days': [6, 0,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 7,
-                        'rate' : 'offpeak',
-                    },
-                    {
-                        'start': 7,
-                        'end'  : 22,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 22,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-        },
-    },
-    {
-        'start': 1416315600,
-        'end'  : 1580635220,
-        'rates': {
-            'peak': 0.308,
-            'shoulder': 0.231,
-            'offpeak': 0.13915,
-            'export': 0.065,
-        },
-        'times': {
-            'weekday': {
-                'days': [1, 2, 3, 4, 5,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 7,
-                        'rate' : 'offpeak',
-                    },
-                    {
-                        'start': 7,
-                        'end'  : 15,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 15,
-                        'end'  : 21,
-                        'rate' : 'peak',
-                    },
-                    {
-                        'start': 21,
-                        'end'  : 22,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 22,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-            'weekend': {
-                'days': [6, 0,],
-                'periods': [
-                    {
-                        'start': 0,
-                        'end'  : 7,
-                        'rate' : 'offpeak',
-                    },
-                    {
-                        'start': 7,
-                        'end'  : 22,
-                        'rate' : 'shoulder',
-                    },
-                    {
-                        'start': 22,
-                        'end'  : 24,
-                        'rate' : 'offpeak',
-                    },
-                ],
-            },
-        },
-    },
-]
+# XXX: To do - pass in by arg & argparse it
+with open(sys.argv[2], "rb") as fh:
+    TARIFF = yaml.safe_load(fh)
 
 # XXX: To do - save to a database, and only gather results from where we need to (i.e. last calc)
 cursor.execute('''
@@ -269,6 +105,6 @@ for n in range(0, max):
         )
 
 cursor.close()
-pvo_db.close()
+PVO_DB.close()
 
 # XXX: To do - produce some reports: yearly, monthly, daily, etc.
