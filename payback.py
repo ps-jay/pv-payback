@@ -1,36 +1,182 @@
 import sqlite3
 import time
 
-PVO_DB = '/opt/energy/pvoutput.sqlite'
+# XXX: To do - pass in by arg
+PVO_DB = '/tmp/pvoutput.sqlite'
 pvo_db = sqlite3.connect(PVO_DB)
 pvo_db.row_factory = sqlite3.Row
 cursor = pvo_db.cursor()
 
+# XXX: To do - pass in by yaml
 TARIFF = [
-    (
-        0,
-        1420030800,
-        {
+    {
+        'start': 0,
+        'end'  : 1416315600,
+        'rates': {
             'peak': 0.3036,
             'offpeak': 0.1386,
-            'peak_days': [1, 2, 3, 4, 5],
-            'peak_times': [(7, 23)],
-            'export': 0.08,
+            'export': 0,  ##  wasn't paid until the meter changed
         },
-    ),
-    (
-        1420030800,
-        1735650000,
-        {
+        'times': {
+            'weekday': {
+                'days': [1, 2, 3, 4, 5,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 7,
+                        'rate' : 'offpeak',
+                    },
+                    {
+                        'start': 7,
+                        'end'  : 23,
+                        'rate' : 'peak',
+                    },
+                    {
+                        'start': 23,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+            'weekend': {
+                'days': [6, 0,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+        },
+    },
+    {
+        'start': 1416315600,
+        'end'  : 1420030800,
+        'rates': {
             'peak': 0.308,
+            'shoulder': 0.231,
             'offpeak': 0.13915,
-            'peak_days': [1, 2, 3, 4, 5],
-            'peak_times': [(7, 23)],
             'export': 0.08,
         },
-    ),
+        'times': {
+            'weekday': {
+                'days': [1, 2, 3, 4, 5,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 7,
+                        'rate' : 'offpeak',
+                    },
+                    {
+                        'start': 7,
+                        'end'  : 15,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 15,
+                        'end'  : 21,
+                        'rate' : 'peak',
+                    },
+                    {
+                        'start': 21,
+                        'end'  : 22,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 22,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+            'weekend': {
+                'days': [6, 0,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 7,
+                        'rate' : 'offpeak',
+                    },
+                    {
+                        'start': 7,
+                        'end'  : 22,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 22,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+        },
+    },
+    {
+        'start': 1416315600,
+        'end'  : 1580635220,
+        'rates': {
+            'peak': 0.308,
+            'shoulder': 0.231,
+            'offpeak': 0.13915,
+            'export': 0.065,
+        },
+        'times': {
+            'weekday': {
+                'days': [1, 2, 3, 4, 5,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 7,
+                        'rate' : 'offpeak',
+                    },
+                    {
+                        'start': 7,
+                        'end'  : 15,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 15,
+                        'end'  : 21,
+                        'rate' : 'peak',
+                    },
+                    {
+                        'start': 21,
+                        'end'  : 22,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 22,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+            'weekend': {
+                'days': [6, 0,],
+                'periods': [
+                    {
+                        'start': 0,
+                        'end'  : 7,
+                        'rate' : 'offpeak',
+                    },
+                    {
+                        'start': 7,
+                        'end'  : 22,
+                        'rate' : 'shoulder',
+                    },
+                    {
+                        'start': 22,
+                        'end'  : 24,
+                        'rate' : 'offpeak',
+                    },
+                ],
+            },
+        },
+    },
 ]
 
+# XXX: To do - save to a database, and only gather results from where we need to (i.e. last calc)
 cursor.execute('''
     SELECT * FROM pvoutput
         ORDER BY timestamp ASC
@@ -68,22 +214,44 @@ for n in range(0, max):
         hour = int(time.strftime("%H", time.localtime(r1[0])))
         
         # Find the right tariffs
+        tariff = None
         for t in TARIFF:
-            if (r1[0] >= t[0]) and (r1[0] < t[1]):
-                tariff = t[2]
+            if (r1[0] >= t['start']) and (r1[0] < t['end']):
+                tariff = t
                 break
+        if tariff is None:
+            print "ERROR: no tarrif found for timestamp %d" % r1[0]
+            exit(101)
 
-        rate = tariff['offpeak']
-        if day in tariff['peak_days']:
-            for period in tariff['peak_times']:
-                if ((hour >= period[0]) and
-                    (hour < period[1])):
-                    rate = tariff['peak']
-                    break
+        periods = None
+        for t_label in t['times']:
+            if day in t['times'][t_label]['days']:
+                periods = t['times'][t_label]['periods']
+                break
+        if periods is None:
+            print "ERROR: no periods found for day %d in label %s" % (
+                day,
+                t_label,
+            )
+            exit(102)
+
+        rate = None
+        for period in periods:
+            if ((hour >= period['start']) and
+                (hour < period['end'])):
+                rate = t['rates'][period['rate']]
+                break
+        if rate is None:
+            print "ERROR: no rate found for hour %d in day %d" % (
+                hour,
+                day,
+            )
+            exit(103)
+
         no_pv = (cons / 1000.0) * rate
         with_pv = (net / 1000.0) * rate
         if net < 0:
-            with_pv = (net / 1000.0) * tariff['export']
+            with_pv = (net / 1000.0) * t['rates']['export']
         save = no_pv - with_pv
         cum_save += save
 
@@ -102,3 +270,5 @@ for n in range(0, max):
 
 cursor.close()
 pvo_db.close()
+
+# XXX: To do - produce some reports: yearly, monthly, daily, etc.
