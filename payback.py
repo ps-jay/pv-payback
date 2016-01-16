@@ -34,6 +34,7 @@ cum_exp = 0
 cum_exp_earn = 0
 cum_gen_used = 0
 cum_gen_avoid = 0
+cum_missed_block = 0
 for n in range(0, max):
     r1 = rows[n]
     r2 = None
@@ -51,6 +52,7 @@ for n in range(0, max):
                 paired = True
                 break
             else:
+                cum_missed_block += 1
                 break
     if paired:
         # v1 = Wh gen
@@ -130,6 +132,8 @@ for n in range(0, max):
             cum_gen_used,
         )
 
+print "Total missed blocks   : %d"    % cum_missed_block
+print ""
 print "Total earned by export: $%.2f" % (cum_exp_earn * -1)
 print "Total avoided by use  : $%.2f" % cum_gen_avoid
 print "Total saved           : $%.2f" % cum_save
