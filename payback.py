@@ -12,7 +12,12 @@ cursor = PVO_DB.cursor()
 with open(sys.argv[2], "rb") as fh:
     TARIFF = yaml.safe_load(fh)
 
+# XXX: To do - argparse
+start = int(sys.argv[3])
+end = int(sys.argv[4])
+
 # XXX: To do - save to a database, and only gather results from where we need to (i.e. last calc)
+# XXX: To do - select based on start & end timestamps
 cursor.execute('''
     SELECT * FROM pvoutput
         ORDER BY timestamp ASC
@@ -33,6 +38,10 @@ for n in range(0, max):
     r1 = rows[n]
     r2 = None
     paired = False
+    if r1[0] < start:
+        continue
+    if r1[0] > end:
+        break
     if (r1[0] % 1800) == 0:
         for p in range(n, max):
             r2 = rows[p]
