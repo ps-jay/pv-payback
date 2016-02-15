@@ -29,12 +29,15 @@ except Exception, e:
 
 index = 0
 max = len(rows)
-cum_save = 0
-cum_exp = 0
-cum_exp_earn = 0
-cum_gen_used = 0
-cum_gen_avoid = 0
-cum_missed_block = 0
+cum_save = 0.0
+cum_exp = 0.0
+cum_exp_earn = 0.0
+cum_gen_used = 0.0
+cum_gen_avoid = 0.0
+cum_missed_block = 0.0
+cum_gen = 0.0
+cum_cons = 0.0
+cum_imp = 0.0
 for n in range(0, max):
     r1 = rows[n]
     r2 = None
@@ -105,17 +108,21 @@ for n in range(0, max):
             with_pv = (net / 1000.0) * t['rates']['export']
             cum_exp += net
             cum_exp_earn += with_pv
+        else:
+            cum_imp += net
         if gen > 0:
             used = gen
             if net < 0:
                 used += net
             cum_gen_used += used
             cum_gen_avoid += (used / 1000.0) * rate
+            cum_gen += gen
 
         save = no_pv - with_pv
         cum_save += save
+        cum_cons += cons
 
-        print "%s - %s: cons=%.0f;%sgen=%.0f;%snet=%.0f;\trate=%.2f;\tno_pv$=%.2f;\twith_pv$=%.2f;\tsave$=%.2f;\tcum_save$=%.2f\tcum_exp=%.0f\tcum_avoid=%.0f" % (
+        print "%s - %s: cons=%.0f;%sgen=%.0f;%snet=%.0f;\trate=%.2f;\tno_pv$=%.2f;\twith_pv$=%.2f;\tsave$=%.2f;\tcum_save$=%.2f\tcum_exp=%.0f\tcum_avoid=%.0f\tcum_cons=%.0f\tcum_imp=%.0f\tcum_gen=%.0f" % (
             time.strftime("%Y-%m-%d %H:%M", time.localtime(r1[0])),
             time.strftime("%Y-%m-%d %H:%M", time.localtime(r2[0])),
             cons,
@@ -130,6 +137,9 @@ for n in range(0, max):
             cum_save,
             cum_exp * -1,
             cum_gen_used,
+            cum_cons,
+            cum_imp,
+            cum_gen,
         )
 
 print "Total missed blocks   : %d"    % cum_missed_block
