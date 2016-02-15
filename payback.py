@@ -1,20 +1,35 @@
+import argparse
 import sqlite3
 import sys
 import time
 import yaml
 
-# XXX: To do - pass in by arg & argparse it
-PVO_DB = sqlite3.connect(sys.argv[1])
+PARSER = argparse.ArgumentParser(description='Compute PV payback info')
+PARSER.add_argument('database',
+                    help='Path to pvoutput SQLite database',
+                   )
+PARSER.add_argument('tariff_file',
+                    help='Path to YAML tariff file',
+                   )
+PARSER.add_argument('-s', '--start',
+                    help='Start time in format: %%Y-%%m-%%d %%H:%%M %%Z (default: %(default)s)',
+                    default='2014-04-04 04:04 AEDT',
+                   )
+PARSER.add_argument('-e', '--end',
+                    help='End time in format: %%Y-%%m-%%d %%H:%%M %%Z (default: %(default)s)',
+                    default='2022-02-02 02:02 AEDT',
+                   )
+ARGS = PARSER.parse_args()
+
+PVO_DB = sqlite3.connect(ARGS.database)
 PVO_DB.row_factory = sqlite3.Row
 cursor = PVO_DB.cursor()
 
-# XXX: To do - pass in by arg & argparse it
-with open(sys.argv[2], "rb") as fh:
+with open(ARGS.tariff_file, "rb") as fh:
     TARIFF = yaml.safe_load(fh)
 
-# XXX: To do - argparse
-start = int(sys.argv[3])
-end = int(sys.argv[4])
+START = time.mktime(time.strptime(ARGS.start, "%Y-%m-%d %H:%M %Z"))
+END = time.mktime(time.strptime(ARGS.end, "%Y-%m-%d %H:%M %Z"))
 
 # XXX: To do - save to a database, and only gather results from where we need to (i.e. last calc)
 # XXX: To do - select based on start & end timestamps
@@ -42,9 +57,9 @@ for n in range(0, max):
     r1 = rows[n]
     r2 = None
     paired = False
-    if r1[0] < start:
+    if r1[0] < START:
         continue
-    if r1[0] > end:
+    if r1[0] > END:
         break
     if (r1[0] % 1800) == 0:
         for p in range(n, max):
@@ -70,7 +85,9 @@ for n in range(0, max):
         # Find the right tariffs
         tariff = None
         for t in TARIFF:
-            if (r1[0] >= t['start']) and (r1[0] < t['end']):
+            s = time.mktime(time.strptime(t['start'], "%Y-%m-%d %H:%M %Z"))
+            e = time.mktime(time.strptime(t['end'], "%Y-%m-%d %H:%M %Z"))
+            if (r1[0] >= s) and (r1[0] < e):
                 tariff = t
                 break
         if tariff is None:
