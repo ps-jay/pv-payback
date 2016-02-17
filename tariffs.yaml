@@ -4,6 +4,7 @@
     peak:    0.3036
     offpeak: 0.1386
     export:  0
+    dsc:     0.935
   times:
     weekday:
       days: [1, 2, 3, 4, 5]
@@ -22,6 +23,7 @@
     shoulder: 0.231
     offpeak:  0.13915
     export:   0.08
+    dsc:      0.935
   times:
     weekday:
       days: [1, 2, 3, 4, 5]
@@ -44,6 +46,7 @@
     shoulder: 0.231
     offpeak:  0.13915
     export:   0.065
+    dsc:      1.045
   times:
     weekday:
       days: [1, 2, 3, 4, 5]
@@ -66,6 +69,7 @@
     shoulder: 0.231
     offpeak:  0.13915
     export:   0.055
+    dsc:      1.045
   times:
     weekday:
       days: [1, 2, 3, 4, 5]

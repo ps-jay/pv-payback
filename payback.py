@@ -53,6 +53,8 @@ cum_missed_block = 0.0
 cum_gen = 0.0
 cum_cons = 0.0
 cum_imp = 0.0
+cum_dsc = 0.0
+curr_day = None
 for n in range(0, max):
     r1 = rows[n]
     r2 = None
@@ -81,7 +83,7 @@ for n in range(0, max):
         net = cons - gen
         day = int(time.strftime("%w", time.localtime(r1[0])))
         hour = int(time.strftime("%H", time.localtime(r1[0])))
-        
+
         # Find the right tariffs
         tariff = None
         for t in TARIFF:
@@ -93,6 +95,10 @@ for n in range(0, max):
         if tariff is None:
             print "ERROR: no tarrif found for timestamp %d" % r1[0]
             exit(101)
+
+        if day != curr_day:
+            curr_day = day
+            cum_dsc += tariff['rates']['dsc']
 
         periods = None
         for t_label in t['times']:
@@ -164,6 +170,7 @@ print ""
 print "Total earned by export: $%.2f" % (cum_exp_earn * -1)
 print "Total avoided by use  : $%.2f" % cum_gen_avoid
 print "Total saved           : $%.2f" % cum_save
+print "Total DSC             : $%.2f" % cum_dsc
 
 cursor.close()
 PVO_DB.close()
