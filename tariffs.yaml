@@ -30,15 +30,12 @@
       periods:
       - {start: 0,  end: 7,  rate: offpeak}
       - {start: 7,  end: 15, rate: shoulder}
-      - {start: 15, end: 21, rate: peak}
-      - {start: 21, end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 15, end: 23, rate: peak}
+      - {start: 23, end: 24, rate: offpeak}
     weekend:
       days: [0, 6]
       periods:
-      - {start: 0,  end: 7,  rate: offpeak}
-      - {start: 7,  end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 0,  end: 24, rate: offpeak}
 - start: "2015-01-01 00:00 AEDT"
   end:   "2016-02-17 00:00 AEDT"
   rates:
@@ -53,15 +50,12 @@
       periods:
       - {start: 0,  end: 7,  rate: offpeak}
       - {start: 7,  end: 15, rate: shoulder}
-      - {start: 15, end: 21, rate: peak}
-      - {start: 21, end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 15, end: 23, rate: peak}
+      - {start: 23, end: 24, rate: offpeak}
     weekend:
       days: [0, 6]
       periods:
-      - {start: 0,  end: 7,  rate: offpeak}
-      - {start: 7,  end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 0,  end: 24, rate: offpeak}
 - start: "2016-02-17 00:00 AEDT"
   end:   "2022-02-02 02:02 AEDT"
   rates:
@@ -76,12 +70,9 @@
       periods:
       - {start: 0,  end: 7,  rate: offpeak}
       - {start: 7,  end: 15, rate: shoulder}
-      - {start: 15, end: 21, rate: peak}
-      - {start: 21, end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 15, end: 23, rate: peak}
+      - {start: 23, end: 24, rate: offpeak}
     weekend:
       days: [0, 6]
       periods:
-      - {start: 0,  end: 7,  rate: offpeak}
-      - {start: 7,  end: 22, rate: shoulder}
-      - {start: 22, end: 24, rate: offpeak}
+      - {start: 0,  end: 24, rate: offpeak}
