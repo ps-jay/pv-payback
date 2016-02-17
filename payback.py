@@ -172,9 +172,12 @@ print "Total missed blocks   : %d"    % cum_missed_block
 print ""
 print "Total earned by export: $%.2f" % (cum_exp_earn * -1)
 print "Total avoided by use  : $%.2f" % cum_gen_avoid
-print "Total saved           : $%.2f" % cum_save
-print "Total DSC             : $%.2f" % cum_dsc
-print "Total spent           : $%.2f" % cum_spend
+print "Total saved (av+ex)   : $%.2f" % cum_save
+print ""
+print "Total import spend    : $%.2f" % cum_spend
+print "Total daily svc chrg  : $%.2f" % cum_dsc
+print ""
+print "Total out-of-pocket   : $%.2f" % (cum_spend + cum_dsc)
 
 cursor.close()
 PVO_DB.close()
