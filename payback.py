@@ -45,6 +45,7 @@ except Exception, e:
 index = 0
 max = len(rows)
 cum_save = 0.0
+cum_spend = 0.0
 cum_exp = 0.0
 cum_exp_earn = 0.0
 cum_gen_used = 0.0
@@ -141,11 +142,12 @@ for n in range(0, max):
             cum_gen_avoid += (used / 1000.0) * rate
             cum_gen += gen
 
+        cum_spend += with_pv
         save = no_pv - with_pv
         cum_save += save
         cum_cons += cons
 
-        print "%s - %s: cons=%.0f;%sgen=%.0f;%snet=%.0f;\trate=%.2f;\tno_pv$=%.2f;\twith_pv$=%.2f;\tsave$=%.2f;\tcum_save$=%.2f\tcum_exp=%.0f\tcum_avoid=%.0f\tcum_cons=%.0f\tcum_imp=%.0f\tcum_gen=%.0f" % (
+        print "%s - %s: cons=%.0f;%sgen=%.0f;%snet=%.0f;\trate=%.2f;\tno_pv$=%.2f;\twith_pv$=%.2f;\tsave$=%.2f;\tcum_save$=%.2f\tcum_spend$=%.2f\tcum_exp=%.0f\tcum_avoid=%.0f\tcum_cons=%.0f\tcum_imp=%.0f\tcum_gen=%.0f" % (
             time.strftime("%Y-%m-%d %H:%M", time.localtime(r1[0])),
             time.strftime("%Y-%m-%d %H:%M", time.localtime(r2[0])),
             cons,
@@ -158,6 +160,7 @@ for n in range(0, max):
             with_pv,
             save,
             cum_save,
+            cum_spend,
             cum_exp * -1,
             cum_gen_used,
             cum_cons,
@@ -171,6 +174,7 @@ print "Total earned by export: $%.2f" % (cum_exp_earn * -1)
 print "Total avoided by use  : $%.2f" % cum_gen_avoid
 print "Total saved           : $%.2f" % cum_save
 print "Total DSC             : $%.2f" % cum_dsc
+print "Total spent           : $%.2f" % cum_spend
 
 cursor.close()
 PVO_DB.close()
