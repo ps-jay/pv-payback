@@ -57,13 +57,33 @@
       periods:
       - {start: 0,  end: 24, rate: offpeak}
 - start: "2016-02-17 00:00 AEDT"
-  end:   "2022-02-02 02:02 AEDT"
+  end:   "2017-01-01 00:00 AEDT"
   rates:
-    peak:     0.308
-    shoulder: 0.231
-    offpeak:  0.13915
-    export:   0.055
-    dsc:      1.045
+    peak:     0.27863
+    shoulder: 0.16060
+    offpeak:  0.1133
+    export:   0.062
+    dsc:      1.16105
+  times:
+    weekday:
+      days: [1, 2, 3, 4, 5]
+      periods:
+      - {start: 0,  end: 7,  rate: offpeak}
+      - {start: 7,  end: 15, rate: shoulder}
+      - {start: 15, end: 23, rate: peak}
+      - {start: 23, end: 24, rate: offpeak}
+    weekend:
+      days: [0, 6]
+      periods:
+      - {start: 0,  end: 24, rate: offpeak}
+- start: "2017-01-01 00:00 AEDT"
+  end:   "2022-02-02 00:00 AEDT"
+  rates:
+    peak:     0.27863
+    shoulder: 0.16060
+    offpeak:  0.1133
+    export:   0.07
+    dsc:      1.16105
   times:
     weekday:
       days: [1, 2, 3, 4, 5]
