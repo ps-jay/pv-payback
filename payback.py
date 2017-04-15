@@ -19,6 +19,9 @@ PARSER.add_argument('-e', '--end',
                     help='End time in format: %%Y-%%m-%%d %%H:%%M %%Z (default: %(default)s)',
                     default='2022-02-02 02:02 AEDT',
                    )
+PARSER.add_argument('-c', '--csv',
+                    help='output csv file',
+                   )
 ARGS = PARSER.parse_args()
 
 PVO_DB = sqlite3.connect(ARGS.database)
@@ -27,6 +30,14 @@ cursor = PVO_DB.cursor()
 
 with open(ARGS.tariff_file, "rb") as fh:
     TARIFF = yaml.safe_load(fh)
+
+if ARGS.csv is not None:
+    try:
+        with open(ARGS.csv, "wb") as fh:
+            fh.write("period_start,period_end,consumed,generated,import_rate,export_rate\n")
+    except:
+        print "WARN: couldn't write to %s" % ARGS.csv
+        sys.exit(1)
 
 START = time.mktime(time.strptime(ARGS.start, "%Y-%m-%d %H:%M %Z"))
 END = time.mktime(time.strptime(ARGS.end, "%Y-%m-%d %H:%M %Z"))
@@ -167,6 +178,16 @@ for n in range(0, max):
             cum_imp,
             cum_gen,
         )
+        if ARGS.csv is not None:
+            with open(ARGS.csv, "ab") as fh:
+                fh.write("%s,%s,%.0f,%.0f,%.5f,%.5f\n" % (
+                    time.strftime("%Y-%m-%d %H:%M", time.localtime(r1[0])),
+                    time.strftime("%Y-%m-%d %H:%M", time.localtime(r2[0])),
+                    cons,
+                    gen,
+                    (rate * 100),
+                    t['rates']['export'],
+                ))
 
 print "Total missed blocks   : %d"    % cum_missed_block
 print ""
